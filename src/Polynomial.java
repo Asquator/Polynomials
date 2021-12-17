@@ -14,6 +14,7 @@ public class Polynomial {
 
     /**
      * Constructs a polynomial from a list of coefficients
+     * @param coef An array of coefficients
      */
     public Polynomial(double... coef) {
         _coefficients = new double[coef.length];
@@ -22,6 +23,11 @@ public class Polynomial {
         reduce();
     }
 
+    /**
+     * Constructs a polynomial from a list of coefficients with custom variable
+     * @param variable A variable to use
+     * @param coef An array of coefficients
+     */
     public Polynomial(char variable, double... coef) {
         this(coef);
         _variable = variable;
@@ -29,8 +35,7 @@ public class Polynomial {
 
     /**
      * Constructs a polynomial from another one
-     *
-     * @param other A polynomial to copy
+     * @param other A polynomial to copy from
      */
     public Polynomial(Polynomial other) {
         _coefficients = new double[other._coefficients.length];
@@ -75,7 +80,6 @@ public class Polynomial {
 
     /**
      * Returns the degree of the polynomial
-     *
      * @return the degree of the polynomial
      */
     public int getDegree() {
@@ -102,10 +106,18 @@ public class Polynomial {
         return isConst() && _coefficients[0] == 0;
     }
 
+    /**
+     * Checks if the polynomial is a constant
+     * @return true if the polynomial is a constant
+     */
     public boolean isConst() {
         return _coefficients.length == 1;
     }
 
+    /**
+     * Checks if the polynomial is linear
+     * @return true if the polynomial is linear
+     */
     public boolean isLinear() {
         return _coefficients.length == 2;
     }
@@ -113,7 +125,6 @@ public class Polynomial {
 
     /**
      * This function calculates the derivative for the current polynomial
-     *
      * @return the derivative function (polynomial)
      */
     public Polynomial getDerivative() {
@@ -129,7 +140,6 @@ public class Polynomial {
 
     /**
      * Calculate the value of a polynomial in x
-     *
      * @param x the value to calculate in
      */
     public double calcAt(double x) {
@@ -141,8 +151,7 @@ public class Polynomial {
     }
 
     /**
-     * Perform addition of polynomials
-     *
+     * Performs addition of polynomials
      * @param other A polynomial to add
      */
     public Polynomial add(Polynomial other) {
@@ -163,7 +172,7 @@ public class Polynomial {
     }
 
 
-    //Root searching algorithm
+    //Analytical section
 
 
     /*
@@ -210,6 +219,13 @@ public class Polynomial {
             return approxRootOppSign(midPoint, max, error); //Opposite signs at middle and maximum points
     }
 
+    /*
+     * Wrapper function for approxRootOppSign()
+     */
+    private double approxRootOppSign(Interval interval, double error) {
+        return approxRootOppSign(interval.getA(), interval.getB(), error);
+    }
+
 
     private double[] searchRootsConstSign(double min, double max, double error) {
         if (!isConst()) {
@@ -250,13 +266,6 @@ public class Polynomial {
         return searchRootsConstSign(interval.getA(), interval.getB(), error);
     }
 
-    /*
-     * Wrapper function for approxRootOppSign()
-     */
-    private double approxRootOppSign(Interval interval, double error) {
-        return approxRootOppSign(interval.getA(), interval.getB(), error);
-    }
-
     /**
      * Finds all roots of the given polynomial in the given interval. If the polynomial is a constant zero, returns an array with maximal double value.
      * @param min   the a endpoint
@@ -269,7 +278,7 @@ public class Polynomial {
             return new double[]{Double.MAX_VALUE};
 
         Interval targetInterval = new Interval(min, max);
-        if (!targetInterval.isValid())
+        if (!targetInterval.isValid()) //Checking if the provided interval is valid
             return new double[0];
 
         double[] roots = new double[getDegree()]; //Stores roots
@@ -302,7 +311,7 @@ public class Polynomial {
                 //Dividing the interval into two parts and checking each of them for the presence of roots
                 for (Interval interval : intervalsWithRoot[i].divideDeviation(roots[rootCounter - 1], error)) {
                     if (interval.isValid()) {
-                        intervalSearchResult = searchIntervalOppSign(interval, error); //Checking if there is an interval with opposite signed endpoints
+                        intervalSearchResult = searchIntervalOppSign(interval, error); //Checking if there is an interval with opposite signes at endpoints
 
                         if (intervalSearchResult.isValid()) {   //Such interval was found, adding it to the search
                             newIntervalsWithRoot[newCountIntOpp] = interval;
@@ -313,14 +322,12 @@ public class Polynomial {
                         }
                     }
                 }
-
             }
             //Preparing the variables for the next iteration
             countIntOpp = newCountIntOpp;
             intervalsWithRoot = newIntervalsWithRoot;
             oppSignIntervals = newOppSignIntervals;
         }
-
 
         //Rounding according to desired error
         finalRoots = new double[rootCounter];
@@ -464,7 +471,6 @@ public class Polynomial {
                 firstCoef = false;
             }
         }
-
         return polynomialToStr;
     }
 }

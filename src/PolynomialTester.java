@@ -6,7 +6,7 @@ import java.util.Arrays;
  */
 public class PolynomialTester {
     public static void main(String[] args) {
-        Polynomial pl1 = new Polynomial(3);
+        Polynomial pl1 = new Polynomial(1,0,-2,3,4,-2);
 
         Polynomial pl2 = pl1.getDerivative();
        /* System.out.println(pl2.getDerivative());
